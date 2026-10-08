@@ -2,29 +2,25 @@
 
 A distraction-free way to write: a focus mode that fades the interface and dims the text around your cursor, plus a typewriter mode that keeps the line you're typing at a steady height.
 
-## Install (about 2 minutes)
+## Install
 
-You don't need a GitHub account. You do need [Obsidian](https://obsidian.md) installed and a vault open.
+You don't need a GitHub account. You do need [Obsidian](https://obsidian.md) installed and a vault open. Pick **one** of the two options.
 
-**Step 1: install the helper plugin (one time only)**
+### Option A: download and unzip (no extra plugins)
 
-1. In Obsidian, click the **gear icon** (bottom-left) to open **Settings**.
-2. Click **Community plugins**. If you see a button that says **Turn on community plugins**, click it.
-3. Click **Browse**, search for **BRAT**, click it, then click **Install**, then **Enable**.
+1. [Click here to download `writing-mode.zip`](https://github.com/VeryRandomness/obsidian-writing-mode/releases/latest/download/writing-mode.zip).
+2. In Obsidian, click the **gear icon** (bottom-left) to open **Settings**, then click **Community plugins**. If you see **Turn on community plugins**, click it.
+3. Next to "Installed plugins", click the **folder icon**. A folder window opens.
+4. Unzip the download. Drag the folder inside it (named `writing-mode`) into the folder window from step 3.
+5. Close Obsidian completely and open it again.
+6. Go back to **Settings → Community plugins** and switch **Writing mode** on.
 
-**Step 2: add this plugin**
+### Option B: use the BRAT helper plugin
 
-1. Open the Obsidian **Command palette** (press `Ctrl+P`, or `Cmd+P` on a Mac).
-2. Type **BRAT: Add a beta plugin for testing** and press Enter.
-3. Paste this exactly, then click **Add Plugin**:
-
-   ```
-   VeryRandomness/obsidian-writing-mode
-   ```
-
-4. When it says it's installed, go to **Settings → Community plugins** and switch **Writing mode** on.
-
-That's it.
+1. In **Settings → Community plugins → Browse**, search for **BRAT**, then **Install** and **Enable** it (one time only).
+2. Open the Command palette (`Ctrl+P`, or `Cmd+P` on a Mac), type **BRAT: Add a beta plugin for testing** and press Enter.
+3. Paste `VeryRandomness/obsidian-writing-mode` and click **Add Plugin**.
+4. Go to **Settings → Community plugins** and switch **Writing mode** on.
 
 ## How to use it
 
@@ -35,13 +31,6 @@ That's it.
 ## Updates
 
 Updates install themselves. Each time you open Obsidian, the plugin checks for a newer version and installs it, then shows a short message. To check right away, open the Command palette and run **Writing mode: Check for update now**.
-
-## Installing without BRAT (manual)
-
-1. Go to the [Releases page](https://github.com/VeryRandomness/obsidian-writing-mode/releases/latest) and download `main.js`, `manifest.json` and `styles.css` (if listed).
-2. In Obsidian, open **Settings → Community plugins** and click the **folder icon** next to "Installed plugins".
-3. Create a new folder named `writing-mode` and put the downloaded files inside it.
-4. Restart Obsidian, then switch the plugin on under **Settings → Community plugins**.
 
 ## Something not working?
 
