@@ -1,7 +1,7 @@
 {
 	"id": "writing-mode",
 	"name": "Writing mode",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"minAppVersion": "1.4.0",
 	"description": "Distraction-free writing: a focus mode that darkens and fades the interface, plus a typewriter mode that keeps your line at a fixed height.",
 	"author": "VeryRandomness",
