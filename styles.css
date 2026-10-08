@@ -1,0 +1,212 @@
+/* @settings
+name: Writing mode – Subtitle
+id: writing-mode-subtitle
+settings:
+    -
+        id: wm-subtitle-color
+        title: Subtitle colour
+        type: variable-themed-color
+        format: hex
+        opacity: false
+        default-light: '#6b6b6b'
+        default-dark: '#a0a0a0'
+    -
+        id: wm-subtitle-font-size
+        title: Subtitle font size
+        type: variable-number-slider
+        default: 1.2
+        min: 0.6
+        max: 3
+        step: 0.05
+        format: em
+    -
+        id: wm-subtitle-font-weight
+        title: Subtitle font weight
+        type: variable-number-slider
+        default: 400
+        min: 100
+        max: 900
+        step: 100
+    -
+        id: wm-subtitle-font-style
+        title: Subtitle font style
+        type: variable-select
+        default: italic
+        options:
+            - italic
+            - normal
+    -
+        id: wm-subtitle-margin-top
+        title: Subtitle space above
+        type: variable-number-slider
+        default: -0.4
+        min: -2
+        max: 3
+        step: 0.1
+        format: em
+    -
+        id: wm-subtitle-margin-bottom
+        title: Subtitle space below
+        type: variable-number-slider
+        default: 1
+        min: 0
+        max: 4
+        step: 0.1
+        format: em
+*/
+
+/* ---------- Focus mode: fade the interface, reveal on hover ---------- */
+
+body.wm-focus .workspace-ribbon,
+body.wm-focus .workspace-split.mod-left-split,
+body.wm-focus .workspace-split.mod-right-split,
+body.wm-focus .workspace-tab-header-container,
+body.wm-focus .view-header,
+body.wm-focus .status-bar,
+body.wm-focus .titlebar {
+	opacity: var(--wm-fade-opacity, 0.08);
+	transition: opacity 300ms ease;
+}
+
+body.wm-focus .workspace-ribbon:hover,
+body.wm-focus .workspace-split.mod-left-split:hover,
+body.wm-focus .workspace-split.mod-right-split:hover,
+body.wm-focus .workspace-tab-header-container:hover,
+body.wm-focus .view-header:hover,
+body.wm-focus .status-bar:hover,
+body.wm-focus .titlebar:hover,
+body.wm-focus .workspace-split.mod-left-split:focus-within,
+body.wm-focus .workspace-split.mod-right-split:focus-within {
+	opacity: 1;
+}
+
+/* Blend the dividers into the dark background */
+body.wm-focus .workspace-split.mod-root,
+body.wm-focus .workspace-leaf-resize-handle {
+	border-color: transparent;
+}
+
+/* ---------- Focus mode: dim text outside the active line/paragraph ---------- */
+
+body.wm-focus.wm-dim .markdown-source-view .cm-content > * {
+	transition: opacity 200ms ease;
+}
+
+body.wm-focus.wm-dim .markdown-source-view .cm-content > :not(.wm-active) {
+	opacity: var(--wm-dim-opacity, 0.3);
+}
+
+/* The note title and properties fade like surrounding text and return on hover or while editing them */
+body.wm-focus .markdown-source-view .inline-title,
+body.wm-focus .markdown-source-view .metadata-container {
+	opacity: var(--wm-dim-opacity, 0.3);
+	transition: opacity 200ms ease;
+}
+
+body.wm-focus .markdown-source-view .inline-title:hover,
+body.wm-focus .markdown-source-view .inline-title:focus,
+body.wm-focus .markdown-source-view .metadata-container:hover,
+body.wm-focus .markdown-source-view .metadata-container:focus-within {
+	opacity: 1;
+}
+
+/* ---------- Focus mode: session word counter ---------- */
+
+.wm-word-counter {
+	display: none;
+	position: fixed;
+	right: 2.5em;
+	bottom: 3em;
+	z-index: var(--layer-status-bar, 15);
+	padding: 0.25em 0.7em;
+	border-radius: var(--radius-m, 6px);
+	font-size: var(--font-ui-small);
+	font-variant-numeric: tabular-nums;
+	color: var(--text-faint);
+	pointer-events: none;
+	transition: color 200ms ease;
+}
+
+body.wm-focus.wm-show-count .wm-word-counter {
+	display: block;
+}
+
+/* ---------- Typewriter mode: room to scroll the first/last lines into place ---------- */
+
+body.wm-typewriter .markdown-source-view.mod-cm6 .cm-sizer {
+	padding-top: calc(var(--wm-tw-position, 0.5) * 100vh) !important;
+	padding-bottom: calc((1 - var(--wm-tw-position, 0.5)) * 100vh) !important;
+}
+
+/* ---------- Current line bar ----------
+   The colour is mixed with transparency rather than a fixed shade, so the same
+   setting reads as a light tint on light backgrounds and a soft glow on dark ones. */
+
+.wm-bar-layer {
+	pointer-events: none;
+}
+
+.wm-bar-layer .wm-bar-mark {
+	border-radius: var(--radius-s, 4px);
+	background-repeat: no-repeat;
+	transition: top 80ms ease, height 80ms ease;
+}
+
+body.wm-bar-band .wm-bar-layer .wm-bar-mark {
+	background-color: color-mix(in srgb, var(--wm-bar-color) var(--wm-bar-strength, 12%), transparent);
+}
+
+body.wm-bar-edge .wm-bar-layer .wm-bar-mark {
+	box-shadow: inset 3px 0 0 var(--wm-bar-color);
+}
+
+body.wm-bar-underline .wm-bar-layer .wm-bar-mark {
+	background-image: linear-gradient(
+		color-mix(in srgb, var(--wm-bar-color) 70%, transparent),
+		color-mix(in srgb, var(--wm-bar-color) 70%, transparent)
+	);
+	background-size: 100% 2px;
+	background-position: bottom left;
+}
+
+/* ---------- Status bar toggles ---------- */
+
+.wm-status {
+	display: flex;
+	gap: 0.6em;
+}
+
+.wm-status-toggle {
+	cursor: pointer;
+	opacity: 0.5;
+}
+
+.wm-status-toggle:hover {
+	opacity: 0.8;
+}
+
+.wm-status-toggle.is-active {
+	opacity: 1;
+	color: var(--text-accent);
+}
+
+
+/* ---------- Subtitle (frontmatter "subtitle") ---------- */
+
+body {
+	--wm-subtitle-color: var(--text-muted);
+	--wm-subtitle-font-size: 1.2em;
+	--wm-subtitle-font-weight: 400;
+	--wm-subtitle-font-style: italic;
+	--wm-subtitle-margin-top: -0.4em;
+	--wm-subtitle-margin-bottom: 1em;
+}
+
+.wm-subtitle {
+	color: var(--wm-subtitle-color);
+	font-size: var(--wm-subtitle-font-size);
+	font-weight: var(--wm-subtitle-font-weight);
+	font-style: var(--wm-subtitle-font-style);
+	line-height: 1.3;
+	margin: var(--wm-subtitle-margin-top) 0 var(--wm-subtitle-margin-bottom);
+}
