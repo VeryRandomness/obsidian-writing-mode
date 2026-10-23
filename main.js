@@ -263,7 +263,10 @@ async function checkForUpdate(plugin, manual) {
 	try {
 		const ref = await latestRepoRef();
 		const remoteManifest = await fetchRepoText(ref, "manifest.json");
-		const version = JSON.parse(remoteManifest).version;
+		const remote = JSON.parse(remoteManifest);
+		// Never install another plugin's files into this folder.
+		if (remote.id !== manifest.id) throw new Error(`the repo's manifest has a different plugin id (${remote.id})`);
+		const version = remote.version;
 		// Read the installed version from disk: after a reload Obsidian keeps serving the stale in-memory manifest.
 		let installed = manifest.version;
 		try { installed = JSON.parse(await app.vault.adapter.read(`${manifest.dir}/manifest.json`)).version; } catch { /* use in-memory */ }
