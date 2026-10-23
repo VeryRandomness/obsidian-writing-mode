@@ -11,7 +11,7 @@ You don't need a GitHub account. You do need [Obsidian](https://obsidian.md) ins
 1. [Click here to download `writing-mode.zip`](https://github.com/VeryRandomness/obsidian-writing-mode/releases/latest/download/writing-mode.zip).
 2. In Obsidian, click the **gear icon** (bottom-left) to open **Settings**, then click **Community plugins**. If you see **Turn on community plugins**, click it.
 3. Next to "Installed plugins", click the **folder icon**. A folder window opens.
-4. Unzip the download. Drag the folder inside it (named `writing-mode`) into the folder window from step 3.
+4. Unzip the download. Drag the folder inside it (named `vr-writing-mode`) into the folder window from step 3. If you installed an earlier version, delete its `writing-mode` folder first.
 5. Close Obsidian completely and open it again.
 6. Go back to **Settings → Community plugins** and switch **Writing mode** on.
 
