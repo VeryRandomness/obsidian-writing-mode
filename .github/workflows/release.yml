@@ -1,0 +1,40 @@
+name: Release
+
+# A release is made on purpose: raise "version" in manifest.json, commit, then push a
+# tag with that version (for example 1.0.7). The plugin's updater installs the latest
+# release only, never the main branch.
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: The tag must match the version in manifest.json
+        run: |
+          v=$(node -p "require('./manifest.json').version")
+          if [ "$v" != "$GITHUB_REF_NAME" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match manifest.json version $v"
+            exit 1
+          fi
+      - run: npm test
+      - name: Build the download zip (the README links to it)
+        run: |
+          mkdir vr-writing-mode
+          cp main.js manifest.json styles.css vr-writing-mode/
+          zip -r writing-mode.zip vr-writing-mode
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" main.js manifest.json styles.css writing-mode.zip \
+            --title "$GITHUB_REF_NAME" --generate-notes

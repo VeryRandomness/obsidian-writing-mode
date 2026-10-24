@@ -227,8 +227,11 @@ function accentHex() {
 }
 
 // ---- Auto-update from GitHub ----
+// The plugin updates itself from the repo's latest GitHub *release*, never from
+// the main branch. A release is made on purpose (a version tag, checked and
+// published by the release workflow), so work in progress on main is never
+// installed on anyone's device.
 const UPDATE_REPO = "VeryRandomness/obsidian-writing-mode";
-const UPDATE_BRANCH = "main";
 
 function isNewerVersion(remote, local) {
 	const a = remote.split(".").map((n) => parseInt(n, 10) || 0);
@@ -239,34 +242,35 @@ function isNewerVersion(remote, local) {
 	return false;
 }
 
-async function fetchRepoText(ref, file) {
-	const url = `https://raw.githubusercontent.com/${UPDATE_REPO}/${ref}/${file}?t=${Date.now()}`;
-	return (await requestUrl({ url, headers: { "Cache-Control": "no-cache" } })).text;
+async function latestRelease() {
+	const res = await requestUrl({
+		url: `https://api.github.com/repos/${UPDATE_REPO}/releases/latest`,
+		headers: { Accept: "application/vnd.github+json", "Cache-Control": "no-cache" },
+	});
+	const json = res.json;
+	if (!json || !json.tag_name) throw new Error("no release has been published yet");
+	const assets = {};
+	for (const a of json.assets || []) assets[a.name] = a.browser_download_url;
+	return { tag: json.tag_name, assets };
 }
 
-// Resolve the branch to an exact commit so a stale CDN copy of "main" is never read.
-async function latestRepoRef() {
-	try {
-		const res = await requestUrl({
-			url: `https://api.github.com/repos/${UPDATE_REPO}/commits/${UPDATE_BRANCH}`,
-			headers: { Accept: "application/vnd.github+json", "Cache-Control": "no-cache" },
-		});
-		if (res.json && res.json.sha) return res.json.sha;
-	} catch (e) {
-		console.warn("Writing mode auto-update: commit lookup failed, falling back to branch", e);
-	}
-	return UPDATE_BRANCH;
+async function downloadAsset(release, file) {
+	const url = release.assets[file];
+	if (!url) throw new Error(`release ${release.tag} has no ${file}`);
+	return (await requestUrl({ url, headers: { "Cache-Control": "no-cache" } })).text;
 }
 
 async function checkForUpdate(plugin, manual) {
 	const { manifest, app } = plugin;
 	try {
-		const ref = await latestRepoRef();
-		const remoteManifest = await fetchRepoText(ref, "manifest.json");
+		const release = await latestRelease();
+		const remoteManifest = await downloadAsset(release, "manifest.json");
 		const remote = JSON.parse(remoteManifest);
 		// Never install another plugin's files into this folder.
-		if (remote.id !== manifest.id) throw new Error(`the repo's manifest has a different plugin id (${remote.id})`);
+		if (remote.id !== manifest.id) throw new Error(`the release's manifest has a different plugin id (${remote.id})`);
 		const version = remote.version;
+		// A release whose tag and manifest disagree was made by mistake: don't install it.
+		if (release.tag.replace(/^v/, "") !== version) throw new Error(`release ${release.tag} contains version ${version}`);
 		// Read the installed version from disk: after a reload Obsidian keeps serving the stale in-memory manifest.
 		let installed = manifest.version;
 		try { installed = JSON.parse(await app.vault.adapter.read(`${manifest.dir}/manifest.json`)).version; } catch { /* use in-memory */ }
@@ -274,15 +278,21 @@ async function checkForUpdate(plugin, manual) {
 			if (manual) new Notice(`${manifest.name} is up to date (version ${installed}).`);
 			return;
 		}
-		const mainJs = await fetchRepoText(ref, "main.js");
+		// Download everything first, then write: a failed download changes nothing.
+		const mainJs = await downloadAsset(release, "main.js");
 		if (!mainJs.trim()) throw new Error("downloaded main.js is empty");
 		let css = null;
-		try { css = await fetchRepoText(ref, "styles.css"); } catch { /* optional */ }
+		if (release.assets["styles.css"]) {
+			css = await downloadAsset(release, "styles.css");
+			if (!css.trim()) css = null;
+		}
 
 		const adapter = app.vault.adapter;
 		await adapter.write(`${manifest.dir}/main.js`, mainJs);
-		await adapter.write(`${manifest.dir}/manifest.json`, remoteManifest);
 		if (css !== null) await adapter.write(`${manifest.dir}/styles.css`, css);
+		// The manifest goes last: if anything above failed, the version on disk is
+		// still the old one and the next start tries again.
+		await adapter.write(`${manifest.dir}/manifest.json`, remoteManifest);
 
 		new Notice(`${manifest.name} updated to ${version}. Reloading…`);
 		const plugins = app.plugins;

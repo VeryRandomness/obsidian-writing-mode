@@ -1,0 +1,10 @@
+{
+	"name": "vr-writing-mode",
+	"version": "0.0.0",
+	"private": true,
+	"description": "Obsidian plugin: distraction-free focus and typewriter mode. Versions are in manifest.json.",
+	"scripts": {
+		"test": "node --check main.js && node tests/updater.test.cjs"
+	},
+	"license": "MIT"
+}
