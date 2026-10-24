@@ -30,7 +30,7 @@ You don't need a GitHub account. You do need [Obsidian](https://obsidian.md) ins
 
 ## Updates
 
-Updates install themselves. Each time you open Obsidian, the plugin checks for a newer version and installs it, then shows a short message. To check right away, open the Command palette and run **Writing mode: Check for update now**.
+Updates install themselves. Each time you open Obsidian, the plugin checks for a newer version and installs it, then shows a short message. Only published releases are installed, so work in progress is never installed. To check right away, open the Command palette and run **Writing mode: Check for update now**.
 
 ## Something not working?
 
