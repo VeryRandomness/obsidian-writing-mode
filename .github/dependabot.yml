@@ -1,0 +1,10 @@
+# Dependabot opens a proposed update when a GitHub action used by the workflows has a
+# newer version. Nothing changes until it is merged by hand, and the tests run on every
+# proposal. (This plugin has no libraries of its own.)
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
