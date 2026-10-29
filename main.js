@@ -470,7 +470,8 @@ class WritingModePlugin extends Plugin {
 		const root = view.containerEl.querySelector(reading ? ".markdown-reading-view" : ".markdown-source-view");
 		if (!root) return;
 
-		let sub = this.app.metadataCache.getFileCache(view.file)?.frontmatter?.subtitle;
+		const fm = this.app.metadataCache.getFileCache(view.file)?.frontmatter;
+		let sub = fm?.subtitle ?? fm?.Subtitle; // either spelling
 		if (Array.isArray(sub)) sub = sub.join(", ");
 		if (sub === undefined || sub === null || String(sub).trim() === "") return;
 
@@ -666,7 +667,7 @@ class WritingModeSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Show subtitle")
-			.setDesc('Show the "subtitle" frontmatter property under the note title in reading mode.')
+			.setDesc('Show the "subtitle" (or "Subtitle") frontmatter property under the note title in reading mode.')
 			.addToggle((t) =>
 				t.setValue(s.showSubtitle).onChange(async (v) => {
 					s.showSubtitle = v;
